@@ -40,11 +40,9 @@ To customize your deployment there are variety of options:
 - **versioning**
   When using these flags, `ship-es` will by default use the version number you provide in the package.json file located in your current working directory.
 
-  - `--verison`: Override Version
   - `--tag`: Override Tag, can be used multiple times
-
-  - `--release` Tag with `stable`, `x.x.x`, `x.x`, `x`
-  - `--nightly`: Tag with `nightly`
+  - `--release` Tag with `stable`, `x.x.x`, `x.x` and `x` (based on your `package.json`)
+  - `--verison`: Override version used by release
 
 - **bundling**
   - By default, `ship-es` bundles all of your external packages into a single file to minimize their filesize and impove compatibility and start-up-performance. This might lead to issues with packages that access external files or depend on native code. To use these, add them using the `--external` flag: `--external esbuild`.

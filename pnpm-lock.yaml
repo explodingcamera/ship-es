@@ -13,7 +13,7 @@ specifiers:
   tap: ^15.1.6
   ts-node: ^10.4.0
   typescript: ^4.5.5
-  yargs: ^17.3.1
+  yargs: git+https://github.com/yargs/yargs
 
 devDependencies:
   '@explodingcamera/eslint-config': 21.0.0_eslint@8.8.0+typescript@4.5.5
@@ -28,7 +28,7 @@ devDependencies:
   tap: 15.1.6_ts-node@10.4.0+typescript@4.5.5
   ts-node: 10.4.0_43d2036524ce97aa8076ce68340fa9ec
   typescript: 4.5.5
-  yargs: 17.3.1
+  yargs: github.com/yargs/yargs/00e4ebbe3acd438e73fdb101e75b4f879eb6d345
 
 packages:
 
@@ -4899,9 +4899,18 @@ packages:
       yargs-parser: 18.1.3
     dev: true
 
-  /yargs/17.3.1:
-    resolution: {integrity: sha512-WUANQeVgjLbNsEmGk20f+nlHgOqzRFpiGWVaBrYGYIGANIIu3lWjoyi0fNlFmJkvfhCZ6BXINe7/W2O2bV4iaA==}
+  /yn/3.1.1:
+    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
+    engines: {node: '>=6'}
+    dev: true
+
+  github.com/yargs/yargs/00e4ebbe3acd438e73fdb101e75b4f879eb6d345:
+    resolution: {tarball: https://codeload.github.com/yargs/yargs/tar.gz/00e4ebbe3acd438e73fdb101e75b4f879eb6d345}
+    name: yargs
+    version: 17.3.1
     engines: {node: '>=12'}
+    prepare: true
+    requiresBuild: true
     dependencies:
       cliui: 7.0.4
       escalade: 3.1.1
@@ -4910,9 +4919,4 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.0.0
-    dev: true
-
-  /yn/3.1.1:
-    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
-    engines: {node: '>=6'}
     dev: true
