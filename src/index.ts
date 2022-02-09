@@ -4,20 +4,36 @@ import { readJson } from './utils/read';
 import micromatch from 'micromatch';
 
 import { PackageJson } from 'type-fest';
+import { mkdir } from 'node:fs/promises';
+import writeFile from 'write-file-atomic';
+import { exec as _exec } from 'node:child_process';
+import { promisify } from 'node:util';
+
+export const exec = promisify(_exec);
 
 export interface BundleParams {
-	workingDirectory: string;
-	outputDirectory: string;
+	cwd: string;
+	outDir: string;
 	release: boolean;
-	externs?: string[];
+	external?: string[];
 	static?: string[];
-	entryPoint?: string[];
+	entryPoint: string;
+	npmClient?: string;
 }
 
-export const generatePkg = (
-	pkg: PackageJson,
-	externals?: string[],
-): PackageJson => {
+export const npmI = async (cwd: string, npmClient = 'npm') => {
+	try {
+		await exec(`${npmClient} install`, {
+			cwd,
+			encoding: null,
+		});
+	} catch (e: unknown) {
+		if (e instanceof Error) return e;
+		return new Error('unknown error while installing dependencies');
+	}
+};
+
+export const generatePkg = (pkg: PackageJson, externals?: string[]): string => {
 	const dependencies: PackageJson.Dependency = {};
 
 	if (externals?.length) {
@@ -32,27 +48,30 @@ export const generatePkg = (
 		}
 	}
 
-	return {
+	const newPkg = {
 		name: pkg.name,
 		version: pkg.version,
 		private: true,
-		type: pkg.type,
+		type: pkg.type ?? 'module',
 		main: 'index.js',
 		dependencies,
+		resolutions: pkg.resolutions,
 	};
+	return JSON.stringify(newPkg);
 };
 
 export const bundleProject = async (params: BundleParams) => {
-	const pkg = await readJson<PackageJson>(
-		join(params.workingDirectory, './package.json'),
-	);
+	const pkg = await readJson<PackageJson>(join(params.cwd, './package.json'));
 	if (!pkg) return new Error('no package.json in working directory');
-	const newPgk = generatePkg(pkg);
-	console.log(newPgk);
+
+	const outDir = join(params.cwd, params.outDir);
+	await mkdir(outDir, { recursive: true });
+	await writeFile(join(outDir, 'package.json'), generatePkg(pkg));
+	await npmI(outDir, params.npmClient);
 
 	// const res = await build({
-	// 	absWorkingDir: params.workingDirectory,
-	// 	outdir: params.outputDirectory,
+	// 	absWorkingDir: params.cwd,
+	// 	outdir: join(outDir, "dist"),
 	// });
 
 	// console.log(res);

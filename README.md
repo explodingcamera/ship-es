@@ -9,7 +9,7 @@
 # setup
 
 `ship-es` works without any configuration by default.
-To run it, authenticate with your docker registry (e.g `$ docker login ghcr.io`) and run `$ npx ship-es ghcr.io/org/project --push`.
+To run it, authenticate with your docker registry (e.g `$ docker login ghcr.io`) and run `$ npx ship-es ./index.ts ghcr.io/org/project --push`.
 
 Below, we've provided a simple GitHub Workflow file to automatically build new commits pushed to your `main` branch and push them as a container to GitHub's Container Registry.
 
@@ -32,7 +32,7 @@ jobs:
       - name: Deploy
         run: |
           npm install
-          npx ship-es ghcr.io/org/project --push
+          npx ship-es ./index.ts ghcr.io/org/project --push
 ```
 
 ## configuration
@@ -53,7 +53,6 @@ To customize your deployment there are variety of options:
 - **bundling**
   - `--external`: By default, `ship-es` bundles all of your packages into a single file to minimize their filesize and impove compatibility and start-up-performance. This might lead to issues with packages that access external files or depend on native code. To use these, add them using the `--external` flag (can be specfied multiple times and supports glob patterns). **Only packages marked as external will be included in your generated image!**
   - `--static`: To include specific folders in the final build (like a `public/` folder with static assets), add these using `--static ./public`.
-  - `--entry-point`: To find your applications entrypoint, `ship-es` first looks at your `package.json` for `main` and `module` fields, then at files in your current directory. To override this, you can use `--entry-point server/index.ts`
 
 ## api
 
