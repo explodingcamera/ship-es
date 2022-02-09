@@ -1,13 +1,15 @@
-# ship-es (currently Work-in-Progress)
+# ship-es <a href="https://www.npmjs.com/package/ship-es"><img src="https://img.shields.io/npm/v/ship-es?style=flat&colorA=000000&colorB =000000"/></a>
+
+**currently work-in-progress, not usable/production ready yet**
 
 > Quickly bundle, containerize and deploy JavaScript and TypeScript server-side projects
 
-Ship-es enables your team to quickly build your `node.js` code and deploy it as a tiny docker image, all with a single command and no required configuration.
+`ship-es` enables your team to quickly build your `node.js` code and deploy it as a tiny docker image, all with a single command and no required configuration.
 
 # setup
 
-`Ship-es` works without any configuration by default.
-To run it, authenticate with your docker registry (e.g `$ docker login ghcr.io`) and run `$ npx ship-es ghcr.io/org/project`.
+`ship-es` works without any configuration by default.
+To run it, authenticate with your docker registry (e.g `$ docker login ghcr.io`) and run `$ npx ship-es ghcr.io/org/project --push`.
 
 Below, we've provided a simple GitHub Workflow file to automatically build new commits pushed to your `main` branch and push them as a container to GitHub's Container Registry.
 
@@ -30,24 +32,28 @@ jobs:
       - name: Deploy
         run: |
           npm install
-          npx ship-es ghcr.io/org/project
+          npx ship-es ghcr.io/org/project --push
 ```
 
 ## configuration
 
 To customize your deployment there are variety of options:
 
-- **versioning**
-  When using these flags, `ship-es` will by default use the version number you provide in the package.json file located in your current working directory.
+- `--push` Push the image to your container registry after building it
+
+- **versioning**\
+   When using these flags, `ship-es` will by default use the version number you provide in the package.json file located in your current working directory.
 
   - `--tag`: Override Tag, can be used multiple times
   - `--release` Tag with `stable`, `x.x.x`, `x.x` and `x` (based on your `package.json`)
   - `--verison`: Override version used by release
+    <br/>
+    <br/>
 
 - **bundling**
-  - By default, `ship-es` bundles all of your external packages into a single file to minimize their filesize and impove compatibility and start-up-performance. This might lead to issues with packages that access external files or depend on native code. To use these, add them using the `--external` flag: `--external esbuild`.
-  - To include specific folders in the final build (like a `public/` folder with static assets), add these using `--static ./public`.
-  - To find your applications entrypoint, `ship-es` first looks at your `package.json` for `main` and `module` fields, then at files in your current directory. To override this, you can use `--entry-point server/index.ts`
+  - `--external`: By default, `ship-es` bundles all of your packages into a single file to minimize their filesize and impove compatibility and start-up-performance. This might lead to issues with packages that access external files or depend on native code. To use these, add them using the `--external` flag (can be specfied multiple times and supports glob patterns). **Only packages marked as external will be included in your generated image!**
+  - `--static`: To include specific folders in the final build (like a `public/` folder with static assets), add these using `--static ./public`.
+  - `--entry-point`: To find your applications entrypoint, `ship-es` first looks at your `package.json` for `main` and `module` fields, then at files in your current directory. To override this, you can use `--entry-point server/index.ts`
 
 ## api
 

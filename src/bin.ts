@@ -1,18 +1,22 @@
 // yargs is currently installed from git due to critical bug fixes not being on npm yet
 // https://github.com/yargs/yargs/pull/2105
+import { join } from 'node:path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { bundleProject } from '.';
 
 interface ShipOptions {
 	[x: string]: unknown;
-	imageName?: string;
-	noPush?: boolean;
+	'image-name': string;
+	push: boolean;
 	tag?: string[];
 	release?: boolean;
-	setVersion?: string;
+	'set-version'?: string;
 	externs?: string[];
 	static?: string[];
-	entryPoint?: string[];
+	'entry-point'?: string[];
+	'out-dir': string;
+	cwd: string;
 }
 
 void yargs(hideBin(process.argv))
@@ -26,11 +30,22 @@ void yargs(hideBin(process.argv))
 				.positional('image-name', {
 					type: 'string',
 					desc: 'docker image name',
+					demandOption: true,
 				})
-				.option('no-push', {
-					alias: ['p', 'dry'],
+				.option('push', {
+					alias: ['p'],
+					default: false,
 					type: 'boolean',
-					desc: "don't push to a registry after building the image",
+					desc: 'push to the container registry after building the image',
+				})
+				.option('cwd', {
+					type: 'string',
+					default: process.cwd(),
+					hidden: true,
+				})
+				.option('out-dir', {
+					type: 'string',
+					default: join(process.cwd(), '.ship-es'),
 				})
 				.option('tag', {
 					type: 'string',
@@ -61,8 +76,16 @@ void yargs(hideBin(process.argv))
 					desc: 'override entrypoint',
 				})
 				.implies('set-version', 'release'),
-		handler: opts => {
-			console.log(`${JSON.stringify(opts.imageName)}`);
+		handler: async opts => {
+			const res = bundleProject({
+				outputDirectory: opts.outDir,
+				release: Boolean(opts.release),
+				workingDirectory: opts.cwd,
+				entryPoint: opts.entryPoint,
+				externs: opts.externs,
+				static: opts.static,
+			});
+			if (res instanceof Error) throw res;
 		},
 	})
 	.option('verbose', {
