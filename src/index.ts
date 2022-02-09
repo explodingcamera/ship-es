@@ -1,15 +1,14 @@
 import { build } from 'esbuild';
-import { join } from 'node:path';
-import { readJson } from './utils/read';
-import micromatch from 'micromatch';
-
-import { PackageJson } from 'type-fest';
-import { mkdir } from 'node:fs/promises';
 import writeFile from 'write-file-atomic';
-import { exec as _exec } from 'node:child_process';
-import { promisify } from 'node:util';
+import micromatch from 'micromatch';
+import { PackageJson } from 'type-fest';
 
-export const exec = promisify(_exec);
+import { join, resolve } from 'node:path';
+import { mkdir } from 'node:fs/promises';
+
+import { readJson } from './utils/read';
+import { npmI } from './utils/npm-i';
+import { checkFileExists } from './utils/file-exists';
 
 export interface BundleParams {
 	cwd: string;
@@ -19,19 +18,8 @@ export interface BundleParams {
 	static?: string[];
 	entryPoint: string;
 	npmClient?: string;
+	watch?: boolean;
 }
-
-export const npmI = async (cwd: string, npmClient = 'npm') => {
-	try {
-		await exec(`${npmClient} install`, {
-			cwd,
-			encoding: null,
-		});
-	} catch (e: unknown) {
-		if (e instanceof Error) return e;
-		return new Error('unknown error while installing dependencies');
-	}
-};
 
 export const generatePkg = (pkg: PackageJson, externals?: string[]): string => {
 	const dependencies: PackageJson.Dependency = {};
@@ -69,10 +57,22 @@ export const bundleProject = async (params: BundleParams) => {
 	await writeFile(join(outDir, 'package.json'), generatePkg(pkg));
 	await npmI(outDir, params.npmClient);
 
-	// const res = await build({
-	// 	absWorkingDir: params.cwd,
-	// 	outdir: join(outDir, "dist"),
-	// });
+	const entrypoint = resolve(params.cwd, params.entryPoint);
+	if (!(await checkFileExists(entrypoint)))
+		return new Error(`entrypoint '${params.entryPoint}' does not exist`);
 
-	// console.log(res);
+	const res = await build({
+		entryPoints: [entrypoint],
+		watch: Boolean(params.watch),
+		absWorkingDir: params.cwd,
+		outfile: join(outDir, 'dist', './index.js'),
+		format: 'esm',
+		target: 'node17',
+		bundle: true,
+		platform: 'node',
+	});
+
+	const { errors, warnings } = res;
+	if (warnings.length) warnings.forEach(w => console.warn(w));
+	if (errors.length) errors.forEach(e => console.warn(e));
 };

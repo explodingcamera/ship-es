@@ -9,7 +9,20 @@
 # setup
 
 `ship-es` works without any configuration by default.
-To run it, authenticate with your docker registry (e.g `$ docker login ghcr.io`) and run `$ npx ship-es ./index.ts ghcr.io/org/project --push`.
+
+```bash
+# create new node.js project, add `dev` script for local development
+$ echo '{ name: "", scripts: { dev: "ship-es dev ./index.ts" } }' > package.json
+
+# install ship-es
+$ npm i -D ship-es
+
+# run your project locally
+$ npm run dev
+
+# push your code to a docker registry
+$ npx ship-es ship ./index.ts explodingcamera/myproject --push
+```
 
 Below, we've provided a simple GitHub Workflow file to automatically build new commits pushed to your `main` branch and push them as a container to GitHub's Container Registry.
 
