@@ -20,7 +20,7 @@ export const devHandler = async (
 		entryPoint: args.entryPoint,
 		external: args.external,
 		static: args.static,
-		watch: args.watch,
+		// watch: args.watch,
 	});
 	if (res instanceof Error) throw res;
 
