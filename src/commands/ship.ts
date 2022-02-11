@@ -20,9 +20,14 @@ export const shipHandler = async (
 	if (res instanceof Error) throw res;
 
 	const res2 = await builtContainer({
+		username: 'asdf',
+		password: 'asdf',
+		registry: 'Asdf',
+		containerClient: 'docker',
 		cwd: args.cwd!,
 		imageName: args.imageName!,
 		tag: args.tag || 'latest',
 	});
+
 	if (res2 instanceof Error) throw res2;
 };

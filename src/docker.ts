@@ -1,84 +1,77 @@
-export interface ContainerBuildOptions {
+import { spawn } from 'node:child_process';
+import archiver from 'archiver';
+import { generateDockerFile } from './container/dockerfile';
+
+interface ContainerRuntimeOptions {
+	containerClient: 'docker' | 'podman' | 'nerdctl';
+	containerFlags?: string[];
+	kanikoFlags?: string[];
+
+	registry: string;
+	username: string;
+	password: string;
+}
+
+export interface ContainerBuildOptions extends ContainerRuntimeOptions {
 	imageName: string;
 	tag: string | string[];
 	cwd: string;
-}
 
-export const generateDockerFile = ({
-	buildDependencies, // default should maybe be ^make gcc g++ python3`
-	prodDependencies,
-}: {
+	// packages to be installed for building (alpine)
 	buildDependencies?: string[];
+
+	// packages to be installed for running the application (alpine)
 	prodDependencies?: string[];
-}) => `
-# This stage installs our modules
-FROM mhart/alpine-node:12
-WORKDIR /app
-COPY package.json package-lock.json ./
-
-${
-	buildDependencies
-		? `RUN apk add --no-cache ${buildDependencies.join(' ')}`
-		: ''
 }
-
-RUN npm ci --prod
-
-# Then we copy over the modules from above onto a slim image
-FROM mhart/alpine-node:slim-12
-
-RUN apk add --no-cache ${prodDependencies ? prodDependencies.join(' ') : ''}
-
-tini
-ENTRYPOINT ["/sbin/tini", "--"]
-
-WORKDIR /app
-COPY --from=0 /app .
-COPY . .
-CMD ["node", "index.js"]
-`;
 
 export const builtContainer = async (
-	_opts: ContainerBuildOptions,
+	opts: ContainerBuildOptions,
 ): Promise<Error | undefined> => {
 	try {
-		// const docker = new Docker(opts.docker);
-		// await docker.pull('gcr.io/kaniko-project/executor:v1.7.0', {
-		// 	authconfig: { serveraddress: 'gcr.io' },
-		// });
-		// const container = await docker.createContainer({
-		// 	Image: 'gcr.io/kaniko-project/executor:v1.7.0',
-		// 	Cmd: ['--context', 'tar://stdin', '--destination', 'asdf/asdf'],
-		// 	AttachStdin: true,
-		// 	AttachStdout: true,
-		// 	AttachStderr: true,
-		// 	Tty: false,
-		// 	// OpenStdin: true,
-		// 	// StdinOnce: false,
-		// 	// Volumes: {},
-		// });
-		// const stream = await container.attach({
-		// 	stream: true,
-		// 	stdin: true,
-		// });
-		// const res = tar.c(
-		// 	{
-		// 		cwd: opts.cwd,
-		// 		gzip: true,
-		// 	},
-		// 	['./'],
-		// );
-		// res.pipe(stream);
-		// container.attach(
-		// 	{ stream: true, stdout: true, stderr: true },
-		// 	(err, stream) => {
-		// 		container.modem.demuxStream(stream, process.stdout, process.stderr);
-		// 	},
-		// );
-		// await container.start();
-		// await container.wait();
-		// stream.end();
-		// process.exit();
+		const dockerFlags = ['--interactive'];
+		if (opts.containerFlags) dockerFlags.push(...opts.containerFlags);
+
+		const kanikoFlags = [
+			'--reproducible',
+			`--context`,
+			`tar://stdin`,
+			`--destination=${opts.imageName}`,
+		];
+		if (opts.kanikoFlags) kanikoFlags.push(...opts.kanikoFlags);
+
+		const docker = spawn('docker', [
+			'run',
+			...dockerFlags,
+			'gcr.io/kaniko-project/executor:v1.7.0',
+			...kanikoFlags,
+		]);
+
+		console.log(
+			[
+				'run',
+				...dockerFlags,
+				'gcr.io/kaniko-project/executor:v1.7.0',
+				...kanikoFlags,
+			].join(' '),
+		);
+
+		docker.stdout.pipe(process.stdout);
+		docker.stderr.pipe(process.stderr);
+		const archive = archiver('tar', {
+			gzip: true,
+		});
+
+		archive.pipe(docker.stdin);
+		archive.directory(opts.cwd, false);
+
+		const { buildDependencies, prodDependencies } = opts;
+		const dockerfile = generateDockerFile({
+			buildDependencies,
+			prodDependencies,
+		});
+
+		archive.append(dockerfile, { name: 'Dockerfile' });
+		await archive.finalize();
 	} catch (error: unknown) {
 		if (error instanceof Error) return error;
 		return new Error('unknown error while building container');
