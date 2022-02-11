@@ -1,13 +1,6 @@
-import tar from 'tar';
-import Docker, { DockerOptions } from 'dockerode';
-
-export interface DockerClientOptions {
-	docker?: DockerOptions;
-}
-
-export interface ContainerBuildOptions extends DockerClientOptions {
+export interface ContainerBuildOptions {
 	imageName: string;
-	tag: string;
+	tag: string | string[];
 	cwd: string;
 }
 
@@ -45,23 +38,49 @@ COPY . .
 CMD ["node", "index.js"]
 `;
 
-export const builtContainer = async (opts: ContainerBuildOptions) => {
-	const docker = new Docker(opts.docker);
-
-	const container = await docker.createContainer({
-		Image: 'gcr.io/kaniko-project/executor:v1.7.0',
-	});
-
-	const stream = await container.start({ hijack: true, stdin: true });
-	const res = await tar.c(
-		{
-			cwd: opts.cwd,
-			gzip: true,
-		},
-		['./'],
-	);
-
-	res.pipe(stream);
-
-	docker.modem.demuxStream(stream, process.stdout, process.stderr);
+export const builtContainer = async (
+	_opts: ContainerBuildOptions,
+): Promise<Error | undefined> => {
+	try {
+		// const docker = new Docker(opts.docker);
+		// await docker.pull('gcr.io/kaniko-project/executor:v1.7.0', {
+		// 	authconfig: { serveraddress: 'gcr.io' },
+		// });
+		// const container = await docker.createContainer({
+		// 	Image: 'gcr.io/kaniko-project/executor:v1.7.0',
+		// 	Cmd: ['--context', 'tar://stdin', '--destination', 'asdf/asdf'],
+		// 	AttachStdin: true,
+		// 	AttachStdout: true,
+		// 	AttachStderr: true,
+		// 	Tty: false,
+		// 	// OpenStdin: true,
+		// 	// StdinOnce: false,
+		// 	// Volumes: {},
+		// });
+		// const stream = await container.attach({
+		// 	stream: true,
+		// 	stdin: true,
+		// });
+		// const res = tar.c(
+		// 	{
+		// 		cwd: opts.cwd,
+		// 		gzip: true,
+		// 	},
+		// 	['./'],
+		// );
+		// res.pipe(stream);
+		// container.attach(
+		// 	{ stream: true, stdout: true, stderr: true },
+		// 	(err, stream) => {
+		// 		container.modem.demuxStream(stream, process.stdout, process.stderr);
+		// 	},
+		// );
+		// await container.start();
+		// await container.wait();
+		// stream.end();
+		// process.exit();
+	} catch (error: unknown) {
+		if (error instanceof Error) return error;
+		return new Error('unknown error while building container');
+	}
 };

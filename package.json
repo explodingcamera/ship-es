@@ -6,6 +6,7 @@
   "author": "<mail@henrygressmann.de>",
   "type": "module",
   "main": "lib/index.js",
+  "repository": "explodingcamera/ship-es",
   "types": "lib/index.d.ts",
   "bin": {
     "ship-es": "./bin/run.mjs",

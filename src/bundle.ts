@@ -6,9 +6,9 @@ import { PackageJson } from 'type-fest';
 import { join, resolve } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 
-import { readJson } from './utils/read';
-import { npmI } from './utils/npm-i';
-import { checkFileExists } from './utils/file-exists';
+import { readJson } from './utils/read.js';
+import { npmI } from './utils/npm-i.js';
+import { checkFileExists } from './utils/file-exists.js';
 
 export interface BundleParams {
 	cwd: string;
