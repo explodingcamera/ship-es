@@ -97,6 +97,11 @@ To customize your deployment there are variety of options:
 
 `ship-es` was build to also be used programatically by other projects as a base. Documentation on this will follow soon.
 
+## Related Projects
+
+- [snowstorm](https://github.com/explodingcamera/snowstorm) - The lightning-fast and minimalist React Tool
+- [fnkit (soon to be release)](https://github.com/explodingcamera/fnkit) - The serverless experience with servers (based on `ship-es`)
+
 ## Tools used by ship-es
 
 `ship-es` is not build to be a catch-all solution for complex deployment pipelines, rather it is a simple starting point and alternative to the huge amount of boilerplate code required to deploy a simple project. Below are the libraries `ship-es` uses internally that you could also use to build more complex setups:
