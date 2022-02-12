@@ -17,6 +17,9 @@ export interface ContainerBuildOptions extends ContainerRuntimeOptions {
 	tag: string | string[];
 	cwd: string;
 
+	// build the container but don't push it to an regestry
+	noPush?: boolean;
+
 	// packages to be installed for building (alpine)
 	buildDependencies?: string[];
 
@@ -38,6 +41,7 @@ export const builtContainer = async (
 			`--destination=${opts.imageName}`,
 		];
 		if (opts.kanikoFlags) kanikoFlags.push(...opts.kanikoFlags);
+		if (opts.noPush) kanikoFlags.push(`--no-push`);
 
 		const docker = spawn('docker', [
 			'run',
@@ -45,15 +49,6 @@ export const builtContainer = async (
 			'gcr.io/kaniko-project/executor:v1.7.0',
 			...kanikoFlags,
 		]);
-
-		console.log(
-			[
-				'run',
-				...dockerFlags,
-				'gcr.io/kaniko-project/executor:v1.7.0',
-				...kanikoFlags,
-			].join(' '),
-		);
 
 		docker.stdout.pipe(process.stdout);
 		docker.stderr.pipe(process.stderr);
