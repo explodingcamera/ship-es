@@ -8,7 +8,7 @@ export const generateDockerFile = ({
 # This stage installs our modules
 FROM mhart/alpine-node:12
 WORKDIR /app
-COPY package.json ./
+COPY package.json /app
 
 ${
   buildDependencies

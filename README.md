@@ -1,10 +1,9 @@
 # ship-es <a href="https://www.npmjs.com/package/ship-es"><img src="https://img.shields.io/npm/v/ship-es?style=flat&colorA=000000&colorB =000000"/></a>
 
-**currently work-in-progress, not usable/production ready yet**
-
 > Quickly bundle, containerize and deploy JavaScript and TypeScript server-side projects
 
-`ship-es` enables your team to quickly build your `node.js` code and deploy it as a tiny docker image, all with a single command and no required configuration.
+`ship-es` enables you to quickly build your `node.js` code and deploy it as a tiny docker image, all with a single command and no required configuration.
+Great for anything from Webservers to Chatbots.
 
 # setup
 
@@ -42,6 +41,11 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "17"
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy
         run: |
           npm install

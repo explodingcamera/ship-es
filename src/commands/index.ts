@@ -11,6 +11,7 @@ export interface ContainerOptions {
 	release?: boolean;
 	'set-version'?: string;
 	'image-name'?: string;
+	'out-dir'?: string;
 }
 
 export interface BundleOptions {
@@ -30,6 +31,10 @@ export const cwdOptions: Record<string, Options> = {
 };
 
 export const containerOptions: Record<string, Options> = {
+	'out-dir': {
+		type: 'string',
+		default: './.ship-es',
+	},
 	tag: {
 		type: 'string',
 		array: true,

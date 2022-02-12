@@ -53,9 +53,9 @@ export const bundleProject = async (params: BundleParams) => {
 	const pkg = await readJson<PackageJson>(join(params.cwd, './package.json'));
 	if (!pkg) return new Error('no package.json in working directory');
 
-	const outDir = join(params.cwd, params.outDir);
-	await mkdir(outDir, { recursive: true });
-	await writeFile(join(outDir, 'package.json'), generatePkg(pkg));
+	const outDir = resolve(params.cwd, params.outDir);
+	await mkdir(join(outDir, './dist'), { recursive: true });
+	await writeFile(join(outDir, 'dist/package.json'), generatePkg(pkg));
 	await npmI(outDir, params.npmClient);
 
 	const entrypoint = resolve(params.cwd, params.entryPoint);
@@ -70,6 +70,7 @@ export const bundleProject = async (params: BundleParams) => {
 		format: 'esm',
 		target: 'node17',
 		bundle: true,
+		minify: true,
 		platform: 'node',
 	});
 
