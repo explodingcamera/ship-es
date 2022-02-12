@@ -10,46 +10,68 @@ Great for anything from Webservers to Chatbots.
 `ship-es` works without any configuration by default.
 
 ```bash
-# create new node.js project, add `dev` script for local development
-$ echo '{ name: "", scripts: { dev: "ship-es dev ./index.ts" } }' > package.json
+# create new node.js project
+$ pnpm init && pnpm i -D ship-es
 
-# install ship-es
-$ npm i -D ship-es
+# write code
+$ echo "console.log('hello world')" > index.ts
 
 # run your project locally
-$ npm run dev
+$ pnpx ship-es dev ./index.ts
 
-# push your code to a docker registry
-$ npx ship-es ship ./index.ts explodingcamera/myproject --push
+# push your code to a container registry (in this case docker.io)
+$ pnpx ship-es ship ./index.ts explodingcamera/myproject
 ```
+
+> using pnpm is reccommended. You can substiture this for your package manager of choice, e.g `npm` or `yarn`
 
 Below, we've provided a simple GitHub Workflow file to automatically build new commits pushed to your `main` branch and push them as a container to GitHub's Container Registry.
 
 ## CI/CD
 
+Ship-es doesn't depend on any platform specific code. Just either `docker`, `podman` or `nerdctl` needs to be installed.
+
+### GitHub Actions
+
+`.github/workflows/deploy.yml`
+
 ```yaml
-name: Release
+name: Deploy
+
+# We want this to run on all commits to `main`
 on:
   push:
     branches:
       - main
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      # Install node.js
       - uses: actions/setup-node@v2
         with:
           node-version: "17"
+
+      # Install pnpm, our recommended package manager (will increase speed by a lot)
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.0.2
+
+      # Authenticate with container registry
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build & push container image
       - name: Deploy
         run: |
-          npm install
-          npx ship-es ./index.ts ghcr.io/org/project --push
+          pnpm install
+          pnpx ship-es ./index.ts ghcr.io/username/project --push
 ```
 
 ## configuration
