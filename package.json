@@ -1,6 +1,6 @@
 {
   "name": "ship-es",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "license": "MIT",
   "author": "<mail@henrygressmann.de>",
@@ -17,13 +17,13 @@
     "./lib/*": "./lib/*"
   },
   "files": [
-    "./lib/*",
-    "./bin/*"
+    "lib/*",
+    "bin/*"
   ],
   "scripts": {
     "build": "npm run build:esbuild && npm run types",
     "watch": "npm run build:esbuild -- --watch",
-    "build:esbuild": "esbuild src/*.ts --minify --bundle --splitting --chunk-names=chunks/[name]-[hash] --outdir=lib --platform=node --external:archiver --external:micromatch --external:esbuild --external:tar --external:write-file-atomic --target=node16 --format=esm",
+    "build:esbuild": "esbuild src/*.ts --bundle --chunk-names=chunks/[name]-[hash] --outdir=lib --platform=node --external:archiver --external:micromatch --external:esbuild --external:tar --external:write-file-atomic --target=node16 --format=esm",
     "dev": "node --loader=ts-node/esm --no-warnings src/index.ts",
     "release": "release-it",
     "test": "tap --ts --node-arg=--no-warnings --node-arg=--loader=ts-node/esm",
