@@ -1,12 +1,12 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@tinyhttp/app': ^2.0.16
+  '@tinyhttp/app': ^2.0.17
   '@tinyhttp/logger': ^1.3.0
   '@tsconfig/recommended': ^1.0.1
 
 dependencies:
-  '@tinyhttp/app': 2.0.16
+  '@tinyhttp/app': 2.0.17
   '@tinyhttp/logger': 1.3.0
 
 devDependencies:
@@ -22,14 +22,14 @@ packages:
       negotiator: 0.6.3
     dev: false
 
-  /@tinyhttp/app/2.0.16:
-    resolution: {integrity: sha512-wM02ZL1i0bvQQi2S2pgmalflN2dynfpZC6ZXeNz/AcAOP4uqASrAV0hF4ghlD/2zTu5vsApRRfba3Swjqwm4bw==}
+  /@tinyhttp/app/2.0.17:
+    resolution: {integrity: sha512-IWBxbAOTLFdE8EFn1qBNJKv4pHYirw1jvPt/Pj5kuI6mpfJO2kmaar+/7wPEQ+82d1hLXFvdXaIez9+qmMzkug==}
     engines: {node: '>=12.x'}
     dependencies:
       '@tinyhttp/cookie': 2.0.3
       '@tinyhttp/proxy-addr': 2.0.3
       '@tinyhttp/req': 2.0.11
-      '@tinyhttp/res': 2.0.12
+      '@tinyhttp/res': 2.0.13
       '@tinyhttp/router': 2.0.4
       header-range-parser: 1.1.1
       regexparam: 2.0.0
@@ -40,8 +40,8 @@ packages:
     engines: {node: '>=12.4.0'}
     dev: false
 
-  /@tinyhttp/cookie-signature/2.0.2:
-    resolution: {integrity: sha512-lyIdDzLILp6T2fymJn9zKBgXwlZMIUiqMUIEd4x/ZGFNvnNs/zeYDBQFdAygBtv4Bgl5Zpf6tN+e6fkj6TlMYQ==}
+  /@tinyhttp/cookie-signature/2.0.3:
+    resolution: {integrity: sha512-sc9qXDTS5qG32ZykBxLIJeGr9GbEr/oY5nDQTZFrCTQ7TdfUjHntSt0ZecPb36xZLsoiRA4RWp3cPC8X1YRu5A==}
     engines: {node: '>=12.4.0'}
     dev: false
 
@@ -93,13 +93,13 @@ packages:
       header-range-parser: 1.1.1
     dev: false
 
-  /@tinyhttp/res/2.0.12:
-    resolution: {integrity: sha512-paHOddeGK4uaLknzrUWfPaRjMVTsrj9BjvNqEUOwtXS7OiIaD1Bm5pdlivD3wFz6h8uKXMKSj6nNKla4rOrmiQ==}
+  /@tinyhttp/res/2.0.13:
+    resolution: {integrity: sha512-cf4Vr3UZe1EsIVtQZO9c/be95KYsMaZt50FASodsi48J5aTxOfVOXBUGn+TtRbpT1t1PPA8ioBRu51cWppxKqA==}
     engines: {node: '>=12.4.0'}
     dependencies:
       '@tinyhttp/content-disposition': 2.0.5
       '@tinyhttp/cookie': 2.0.3
-      '@tinyhttp/cookie-signature': 2.0.2
+      '@tinyhttp/cookie-signature': 2.0.3
       '@tinyhttp/encode-url': 2.0.4
       '@tinyhttp/req': 2.0.11
       '@tinyhttp/send': 2.0.3
@@ -166,7 +166,7 @@ packages:
     resolution: {integrity: sha512-rUrmfrUIHU/4ykYB+YH80LDiSpmn6sE/A9E8EsFZP4LCtf/PH+ju6d6goFJ8fsGf81pRtQn1cJSmp8JGA9YkfQ==}
     engines: {node: '>=12.x'}
     dependencies:
-      mime-db: 1.51.0
+      mime-db: 1.52.0
     dev: false
 
   /es-vary/0.1.1:
@@ -188,8 +188,8 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
-  /mime-db/1.51.0:
-    resolution: {integrity: sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==}
+  /mime-db/1.52.0:
+    resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
     engines: {node: '>= 0.6'}
     dev: false
 
