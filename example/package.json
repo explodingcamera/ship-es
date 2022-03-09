@@ -14,7 +14,7 @@
     "@tsconfig/recommended": "^1.0.1"
   },
   "dependencies": {
-    "@tinyhttp/app": "^2.0.17",
+    "@tinyhttp/app": "^2.0.19",
     "@tinyhttp/logger": "^1.3.0"
   }
 }
