@@ -68,9 +68,12 @@ export const bundleProject = async (params: BundleParams) => {
 		absWorkingDir: params.cwd,
 		outfile: join(outDir, 'dist', './index.js'),
 		format: 'esm',
+		mainFields: ['module', 'main'],
+		conditions: ['import', 'default'],
+		external: params.external,
 		target: 'node17',
 		bundle: true,
-		minify: true,
+		minify: params.release,
 		platform: 'node',
 	});
 
